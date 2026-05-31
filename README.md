@@ -1,10 +1,10 @@
-# 🚀 FastAPI + Render + Neon PostgreSQL + JWT Authentication (Alembic Ready)
+# 🚀 FastAPI + Render + MariaDB + JWT Authentication (Alembic Ready)
 
 Last updated
 
-- 29-05-2026
+- 31-05-2026
 
-A production-ready backend built with FastAPI, PostgreSQL (Neon), JWT authentication, bcrypt password hashing, and Alembic migrations hosted at Render
+A production-ready backend built with FastAPI, MariaDB (HelioHost), JWT authentication, bcrypt password hashing, and Alembic migrations hosted at Render.
 
 ---
 
@@ -12,22 +12,23 @@ A production-ready backend built with FastAPI, PostgreSQL (Neon), JWT authentica
 
 - FastAPI
 - Hosted at Render
-- PostgreSQL (Neon)
+- MariaDB (HelioHost)
 - SQLAlchemy ORM
 - Alembic (migrations)
 - JWT Authentication (python-jose)
 - bcrypt
 - Uvicorn
+- PyMySQL driver
 
 ---
 
 ## ✨ Features
 
-- User registration
+- User registration (DEV mode only)
 - Secure password hashing (bcrypt)
 - JWT login system
 - Protected routes
-- PostgreSQL cloud database (Neon)
+- MariaDB cloud database (HelioHost)
 - Alembic migrations
 - Swagger UI testing
 
@@ -59,10 +60,11 @@ pip install -r requirements.txt
 
 Create a `.env` file:
 
-DATABASE_URL=postgresql://USER:PASSWORD@ep-xxx.neon.tech/neondb?sslmode=require&channel_binding=require
-SECRET_KEY=your-secret-key
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+DATABASE_URL=mysql+pymysql://USER:PASSWORD@HOST:3306/DATABASE  
+SECRET_KEY=your-secret-key  
+ALGORITHM=HS256  
+ACCESS_TOKEN_EXPIRE_MINUTES=30  
+DEV_MODE=true  
 
 ---
 
@@ -87,7 +89,7 @@ uvicorn app:app --reload
 
 ## 🌐 API Endpoints
 
-Register user:
+Register user (DEV ONLY):
 POST /register
 
 {
@@ -100,15 +102,16 @@ POST /register
 Login:
 POST /token
 
-username = email
-password = password
+- username = email
+- password = password
 
 ---
 
 Protected route:
 GET /protected
 
-Authorization: Bearer YOUR_TOKEN
+Authorization:
+Bearer YOUR_TOKEN
 
 ---
 
@@ -120,7 +123,7 @@ http://127.0.0.1:8000/docs
 
 ## 🧠 Architecture
 
-FastAPI → SQLAlchemy → PostgreSQL (Neon)
+FastAPI → SQLAlchemy → MariaDB (HelioHost)
 → Alembic migrations
 → bcrypt + JWT authentication
 
@@ -132,15 +135,21 @@ FastAPI → SQLAlchemy → PostgreSQL (Neon)
 - JWT authentication
 - Environment variables
 - No hardcoded secrets
+- DEV_MODE protection for user creation
 
 ---
 
 ## ☁️ Deployment Notes
 
-Run before deploy:
-alembic upgrade head
+Render Start Command:
 
-Set env vars in Render / production.
+gunicorn app:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+
+Before deploying:
+- Run migrations locally:
+  alembic upgrade head
+
+- Set environment variables in Render
 
 ---
 
@@ -148,7 +157,8 @@ Set env vars in Render / production.
 
 - Do NOT use create_all()
 - Always use Alembic migrations
-- Neon requires SSL in DATABASE_URL
+- Ensure MariaDB connection uses PyMySQL:
+  mysql+pymysql://USER:PASSWORD@HOST:3306/DB
 
 ---
 
