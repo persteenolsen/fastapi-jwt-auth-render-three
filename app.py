@@ -40,7 +40,7 @@ DEV_MODE = os.getenv("DEV_MODE", "false").lower() == "true"
 # -----------------------------
 app = FastAPI(
     title="FastAPI + JWT Auth + Render + MariaDB",
-    description="03-06-2026 - FastAPI using JWT authentication hosted at Render with MariaDB",
+    description="05-07-2026 - FastAPI using JWT authentication hosted at Render with MariaDB",
     version="1.0.0",
 )
 
